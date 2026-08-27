@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ROS 2
+build/
+install/
+log/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Large datasets / recordings
+*.bag
+*.db3
+*.mcap
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
+
+# Local configuration
+.env
