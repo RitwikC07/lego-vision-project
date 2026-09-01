@@ -4,6 +4,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 
+import numpy as np
 
 class DepthReader(Node):
 
@@ -19,12 +20,10 @@ class DepthReader(Node):
             10
         )
 
-        self.measured = False
+        self.depth_values = []
+        self.max_samples = 100
 
     def depth_callback(self, msg):
-
-        if self.measured:
-            return
 
         depth_image = self.bridge.imgmsg_to_cv2(
             msg,
@@ -36,21 +35,40 @@ class DepthReader(Node):
         u = width // 2
         v = height // 2
 
-        raw_depth = depth_image[v, u]
+        raw_depth = int(depth_image[v, u])
+        
+        if raw_depth > 0:
+            self.depth_values.append(raw_depth)
 
-        self.get_logger().info(
-            f'Image size: {width} x {height}'
-        )
+        if len(self.depth_values) >= self.max_samples:
 
-        self.get_logger().info(
-            f'Pixel: ({u}, {v})'
-        )
+            values = np.array(self.depth_values)
 
-        self.get_logger().info(
-            f'Raw depth value: {raw_depth}'
-        )
+            self.get_logger().info(
+                f'Collected {len(values)} valid measurements'
+            )
 
-        self.measured = True
+            self.get_logger().info(
+                f'Min:    {values.min()}'
+            )
+
+            self.get_logger().info(
+                f'Max:    {values.max()}'
+            )
+
+            self.get_logger().info(
+                f'Mean:   {values.mean():.2f}'
+            )
+
+            self.get_logger().info(
+                f'Median: {np.median(values):.2f}'
+            )
+
+            self.get_logger().info(
+                f'Std:    {values.std():.2f}'
+            )
+
+            self.destroy_node()
 
 
 def main(args=None):
@@ -59,10 +77,8 @@ def main(args=None):
 
     node = DepthReader()
 
-    while rclpy.ok() and not node.measured:
+    while rclpy.ok() and node.depth_values.__len__() < node.max_samples:
         rclpy.spin_once(node)
-
-    node.destroy_node()
     rclpy.shutdown()
 
 
