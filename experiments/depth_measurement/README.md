@@ -198,11 +198,11 @@ I also learned that depth can provide more than just a distance measurement. Onc
 
 ## Conclusion
 
-- The RealSense depth image provides sufficiently stable measurements for the tested setup.
+The RealSense depth image provides sufficiently stable measurements for the tested setup.
 
-- More importantly, modelling the table as a depth plane and using depth residuals provides a robust way to distinguish the book from the table.
+More importantly, modelling the table as a depth plane and using depth residuals provides a robust way to distinguish the book from the table.
 
-- The final detector was able to:
+The final detector was able to:
 
 * Estimate the expected table depth.
 * Detect the book using depth residuals.
